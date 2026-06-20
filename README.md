@@ -2,6 +2,8 @@
 
 A web-based **Personal Exercise Gym Instructor** that guides you through home workouts step by step — set by set, with auto-timed rests, and a complete history of every session. Everything is stored locally on your device; no account or network connection required.
 
+![](assets/intro.png)
+
 Built as a Progressive Web App so you can install it on your phone or desktop and use it offline.
 
 > See [`masterplan.md`](./masterplan.md) for the full product spec and [`future-enhancements.md`](./future-enhancements.md) for the roadmap beyond the MVP.
