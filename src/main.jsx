@@ -20,9 +20,14 @@ if (typeof window !== 'undefined') {
   window.__updateSW = updateSW;
 }
 
+// basename must match Vite's `base` config so React Router's `<Link to="/plan" />`
+// resolves to `/personal-gym/plan` on the deployed site. In dev, Vite sets
+// BASE_URL to "/" so the app mounts at the dev server root.
+const basename = import.meta.env.BASE_URL.replace(/\/$/, '');
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <AppProviders>
         <App />
       </AppProviders>

@@ -15,7 +15,8 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:full": "npm run build && npm run e2e:report",
     "e2e:report": "start-server-and-test preview http://localhost:4173 'playwright test --reporter=list,html'",
-    "e2e:install": "playwright install --with-deps chromium"
+    "e2e:install": "playwright install --with-deps chromium",
+    "test:all": "npm run test && npm run test:e2e:full"
   },
   "dependencies": {
     "dexie": "^4.0.10",

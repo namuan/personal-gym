@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { paths } from './paths.js';
 
 /**
  * End-to-end smoke test for the core MVP flow:
@@ -11,7 +12,7 @@ import { test, expect } from '@playwright/test';
  * and Service Worker caches before navigation.
  */
 test.beforeEach(async ({ page }) => {
-  await page.goto('/');
+  await page.goto(paths.home);
   await page.evaluate(async () => {
     // Drop any persisted plan / sessions from previous runs so tests
     // are independent. The app uses Dexie over IndexedDB.
@@ -66,7 +67,7 @@ test('navigation links reach the editor, workout, and history pages', async ({ p
 
 test('create a plan, run a workout, and see the session in history', async ({ page }) => {
   // 1. Create a plan with one exercise, single set, no rest.
-  await page.goto('/plan');
+  await page.goto(paths.plan);
   await expect(
     page.getByRole('heading', { name: /your workout plan/i }),
   ).toBeVisible();
@@ -81,7 +82,7 @@ test('create a plan, run a workout, and see the session in history', async ({ pa
   await expect(page.getByRole('button', { name: /saved/i })).toBeVisible();
 
   // 2. Start the workout from the home page.
-  await page.goto('/');
+  await page.goto(paths.home);
   await expect(page.getByRole('link', { name: /start workout/i })).toBeVisible();
   await page.getByRole('link', { name: /start workout/i }).click();
   await expect(page.getByRole('heading', { name: /ready to work out/i })).toBeVisible();

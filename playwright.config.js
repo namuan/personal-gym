@@ -8,6 +8,10 @@ import { defineConfig, devices } from '@playwright/test';
  * `test:e2e:full` npm scripts). This keeps the server lifecycle
  * obvious in CI logs and lets a single command build, serve, test,
  * and report.
+ *
+ * `baseURL` is the served origin (no path). The app is mounted at
+ * `/personal-gym/` to mirror the production GitHub Pages URL, so
+ * tests navigate to that path explicitly (see `e2e/paths.js`).
  */
 export default defineConfig({
   testDir: './e2e',

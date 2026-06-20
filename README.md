@@ -124,7 +124,43 @@ Other e2e commands:
 npm run test:all
 ```
 
-This runs unit tests followed by the full e2e flow.
+This runs the unit tests followed by the full e2e flow (build + serve + tests + HTML report).
+
+---
+
+## Deployment to GitHub Pages
+
+The app is a static PWA — there is no server. It's set up to deploy to a GitHub Pages **project site** at `https://<your-username>.github.io/personal-gym/`.
+
+### One-time setup
+
+1. Push the repository to GitHub.
+2. In the repository settings → **Pages**, set the source to **GitHub Actions** (not "Deploy from a branch").
+3. Make sure the default branch is `main` (or update `.github/workflows/deploy.yml` to match).
+
+That's it. From now on, every push to `main` builds and deploys automatically.
+
+### How it works
+
+- **Vite `base`** is set to `/personal-gym/` in `vite.config.js`, so all emitted asset URLs include the project-site path. This is what makes the bundle work under the `/personal-gym/` URL.
+- **PWA manifest** uses the same path for `start_url` and `scope`, so the installed PWA opens at the right place.
+- **React Router** reads `import.meta.env.BASE_URL` and uses it as its `basename`, so `<Link to="/plan">` resolves to `/personal-gym/plan`.
+- **SPA 404 fallback**: a tiny Vite plugin copies `index.html` to `404.html` during build. GitHub Pages serves `404.html` for any unknown route; React Router then takes over from the URL.
+- **Service worker** is scoped to `/personal-gym/` so it can control pages under that path.
+
+The workflow lives in [`.github/workflows/deploy.yml`](./.github/workflows/deploy.yml) and uses the official `actions/deploy-pages` action.
+
+### Local preview of the production build
+
+```bash
+npm run preview
+```
+
+Vite's preview server respects the configured `base`, so it'll serve the app at `http://localhost:4173/personal-gym/` — same path shape as the deployed site. This is exactly what the e2e suite exercises.
+
+### Switching to a user/org site
+
+If you ever publish under a custom domain or a user/org site (e.g. the repo is renamed to `<your-username>.github.io`), change the `BASE` constant in `vite.config.js` to `'/'`.
 
 ---
 
