@@ -8,6 +8,10 @@ Built as a Progressive Web App so you can install it on your phone or desktop an
 
 > See [`masterplan.md`](./masterplan.md) for the full product spec and [`future-enhancements.md`](./future-enhancements.md) for the roadmap beyond the MVP.
 
+<br>
+
+[![Quick reference](https://img.shields.io/badge/make-help-blue?style=flat-square)](./Makefile) — run `make help` for all available commands.
+
 ---
 
 ## Features (MVP)
@@ -37,6 +41,8 @@ All data lives in your browser's IndexedDB. No server, no telemetry, no accounts
 ---
 
 ## Getting started
+
+A [`Makefile`](./Makefile) bundles all common commands — run `make help` to see them at a glance.
 
 ### Prerequisites
 
@@ -166,6 +172,25 @@ If you ever publish under a custom domain or a user/org site (e.g. the repo is r
 
 ---
 
+---
+
+## Promo video
+
+A 30-second product video for Personal Gym lives in [`promo-video/`](./promo-video/). It captures the app in action via Playwright screenshots and animates them with Remotion.
+
+| Target | Command |
+| --- | --- |
+| Preview the video | `make video-dev` |
+| Render the final video | `make video-render` |
+| Re-capture screenshots | `make video-screenshots`* |
+| Render a single frame | `make video-still frame=60` |
+
+*\*Requires the production build running on `http://localhost:4173` (run `make preview` in another terminal).*
+
+The rendered video is written to `promo-video/out/product-video.mp4`.
+
+---
+
 ## Project structure
 
 ```
@@ -187,6 +212,11 @@ personal-gym/
 │  └─ index.css            # Tailwind layers + a small set of component classes
 ├─ e2e/
 │  └─ smoke.spec.js        # Playwright e2e tests
+├─ promo-video/            # Remotion product video project
+│  ├─ src/scenes/          # Video scene components
+│  ├─ capture-screenshots.mjs  # Playwright screenshot capture script
+│  └─ public/screenshots/  # Generated app screenshots (gitignored)
+├─ Makefile                # Convenience commands for app + video
 ├─ playwright.config.js
 ├─ vite.config.js          # Vite + PWA + Vitest config
 ├─ tailwind.config.js
