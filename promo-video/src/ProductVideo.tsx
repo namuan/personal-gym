@@ -1,4 +1,4 @@
-import { AbsoluteFill, Sequence } from "remotion";
+import { AbsoluteFill, Audio, Sequence, staticFile } from "remotion";
 import { theme } from "./theme";
 import { TitleScene } from "./scenes/TitleScene";
 import { FeatureScene } from "./scenes/FeatureScene";
@@ -8,9 +8,21 @@ import { OutroScene } from "./scenes/OutroScene";
 const FPS = 30;
 const SEC = FPS;
 
+const DURATION_IN_FRAMES = 30 * 30; // 30 seconds at 30fps
+const FADE_OUT_START = DURATION_IN_FRAMES - 3 * 30; // 3 seconds before end
+
 export const ProductVideo: React.FC = () => {
   return (
     <AbsoluteFill>
+      {/* Background music with fade-out over last 3 seconds */}
+      <Audio
+        src={staticFile("audio/zeus-chat-promo-background.mp3")}
+        volume={(f) => {
+          if (f < FADE_OUT_START) return 1;
+          return 1 - (f - FADE_OUT_START) / (DURATION_IN_FRAMES - FADE_OUT_START);
+        }}
+      />
+
       {/* 1. Title - 4s (frames 0-120) */}
       <Sequence from={0} durationInFrames={4 * SEC}>
         <TitleScene />
