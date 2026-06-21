@@ -111,7 +111,7 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
             <div
               style={{
                 height: 36,
-                backgroundColor: theme.bg,
+                backgroundColor: "#000",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
