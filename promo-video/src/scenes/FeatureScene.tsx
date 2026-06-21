@@ -6,6 +6,7 @@ import {
   staticFile,
   spring,
 } from "remotion";
+import { theme } from "../theme";
 
 interface FeatureSceneProps {
   title: string;
@@ -53,7 +54,7 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#0f172a",
+        backgroundColor: theme.bg,
         opacity,
       }}
     >
@@ -67,7 +68,7 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
           width: 500,
           height: 500,
           borderRadius: "50%",
-          background: `radial-gradient(circle, ${gradientFrom}15 0%, transparent 70%)`,
+          background: `radial-gradient(circle, ${gradientFrom}40 0%, transparent 70%)`,
         }}
       />
 
@@ -99,10 +100,10 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
               width: 320,
               height: 730,
               borderRadius: 36,
-              border: "3px solid #334155",
+              border: "3px solid #000",
               overflow: "hidden",
-              boxShadow: "0 20px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(99,102,241,0.1)",
-              backgroundColor: "#1e293b",
+              boxShadow: `0 20px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(${theme.brandFromRgb},0.15)`,
+              backgroundColor: theme.surface,
               position: "relative",
             }}
           >
@@ -110,7 +111,7 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
             <div
               style={{
                 height: 36,
-                backgroundColor: "#0f172a",
+                backgroundColor: theme.bg,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -121,7 +122,7 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
                 style={{
                   width: 120,
                   height: 5,
-                  backgroundColor: "#334155",
+                  backgroundColor: theme.border,
                   borderRadius: 3,
                 }}
               />
@@ -164,7 +165,7 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
               fontSize: 52,
               fontWeight: 700,
               letterSpacing: "-0.02em",
-              color: "#f8fafc",
+              color: theme.textPrimary,
               lineHeight: 1.15,
               marginBottom: 16,
               textAlign: isLeft ? "left" : "right",
@@ -176,7 +177,7 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
             style={{
               fontSize: 22,
               fontWeight: 400,
-              color: "#94a3b8",
+              color: theme.textMuted,
               lineHeight: 1.6,
               textAlign: isLeft ? "left" : "right",
             }}

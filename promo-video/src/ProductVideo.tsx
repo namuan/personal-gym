@@ -1,4 +1,5 @@
 import { AbsoluteFill, Sequence } from "remotion";
+import { theme } from "./theme";
 import { TitleScene } from "./scenes/TitleScene";
 import { FeatureScene } from "./scenes/FeatureScene";
 import { HighlightsScene } from "./scenes/HighlightsScene";
@@ -22,8 +23,8 @@ export const ProductVideo: React.FC = () => {
           description="Create your perfect home workout plan. Add exercises, set reps and rest times, reorder, and customize every detail — all in one simple editor."
           screenshotFile="screenshots/plan-editor.png"
           align="left"
-          gradientFrom="#6366f1"
-          gradientTo="#a78bfa"
+          gradientFrom={theme.featureGradients.planEditor.from}
+          gradientTo={theme.featureGradients.planEditor.to}
         />
       </Sequence>
 
@@ -34,8 +35,8 @@ export const ProductVideo: React.FC = () => {
           description="Follow along as the app guides you through each set of each exercise. Mark reps completed and watch your progress bar fill up."
           screenshotFile="screenshots/session-in-progress.png"
           align="right"
-          gradientFrom="#06b6d4"
-          gradientTo="#22d3ee"
+          gradientFrom={theme.featureGradients.sessionProgress.from}
+          gradientTo={theme.featureGradients.sessionProgress.to}
         />
       </Sequence>
 
@@ -46,8 +47,8 @@ export const ProductVideo: React.FC = () => {
           description="Automatic countdown between sets keeps your workout on track. Skip or adjust anytime — you're in control."
           screenshotFile="screenshots/session-rest.png"
           align="left"
-          gradientFrom="#f59e0b"
-          gradientTo="#fbbf24"
+          gradientFrom={theme.featureGradients.restTimer.from}
+          gradientTo={theme.featureGradients.restTimer.to}
         />
       </Sequence>
 
@@ -58,8 +59,8 @@ export const ProductVideo: React.FC = () => {
           description="Every completed workout is saved with full detail — date, sets, reps, and duration. Watch yourself improve over time."
           screenshotFile="screenshots/history.png"
           align="right"
-          gradientFrom="#10b981"
-          gradientTo="#34d399"
+          gradientFrom={theme.featureGradients.history.from}
+          gradientTo={theme.featureGradients.history.to}
         />
       </Sequence>
 

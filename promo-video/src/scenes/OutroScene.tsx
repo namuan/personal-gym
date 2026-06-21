@@ -5,6 +5,7 @@ import {
   spring,
   useVideoConfig,
 } from "remotion";
+import { theme } from "../theme";
 
 export const OutroScene: React.FC = () => {
   const frame = useCurrentFrame();
@@ -34,7 +35,7 @@ export const OutroScene: React.FC = () => {
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#0f172a",
+        backgroundColor: theme.bg,
         opacity,
       }}
     >
@@ -49,8 +50,7 @@ export const OutroScene: React.FC = () => {
           width: 600,
           height: 600,
           borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%)",
+          background: `radial-gradient(circle, rgba(${theme.brandFromRgb},0.18) 0%, transparent 70%)`,
         }}
       />
 
@@ -80,16 +80,16 @@ export const OutroScene: React.FC = () => {
               width="16"
               height="40"
               rx="3"
-              fill="#6366f1"
+              fill={theme.brandFrom}
             />
-            <rect x="8" y="16" width="10" height="28" rx="5" fill="#818cf8" />
+            <rect x="8" y="16" width="10" height="28" rx="5" fill={theme.brandMid} />
             <rect
               x="42"
               y="16"
               width="10"
               height="28"
               rx="5"
-              fill="#818cf8"
+              fill={theme.brandMid}
             />
           </svg>
         </div>
@@ -99,7 +99,7 @@ export const OutroScene: React.FC = () => {
             fontSize: 64,
             fontWeight: 700,
             letterSpacing: "-0.02em",
-            color: "#f8fafc",
+            color: theme.textPrimary,
             textAlign: "center",
             lineHeight: 1.2,
             transform: `scale(${titleScale})`,
@@ -108,7 +108,7 @@ export const OutroScene: React.FC = () => {
           Start your fitness{" "}
           <span
             style={{
-              background: "linear-gradient(135deg, #6366f1, #a78bfa)",
+              background: `linear-gradient(135deg, ${theme.brandFrom}, ${theme.brandTo})`,
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}
@@ -129,15 +129,15 @@ export const OutroScene: React.FC = () => {
               padding: "16px 48px",
               borderRadius: 12,
               background:
-                "linear-gradient(135deg, #6366f1, #818cf8)",
-              boxShadow: "0 8px 32px rgba(99,102,241,0.3)",
+                `linear-gradient(135deg, ${theme.brandMid}, ${theme.brandTo})`,
+              boxShadow: `0 8px 32px rgba(${theme.brandToRgb},0.35)`,
             }}
           >
             <span
               style={{
                 fontSize: 24,
                 fontWeight: 600,
-                color: "#ffffff",
+                color: theme.bg,
               }}
             >
               Try it free — no account needed
@@ -155,7 +155,7 @@ export const OutroScene: React.FC = () => {
             style={{
               fontSize: 18,
               fontWeight: 400,
-              color: "#64748b",
+              color: theme.textSubtle,
             }}
           >
             Install on your phone · Works offline · 100% free

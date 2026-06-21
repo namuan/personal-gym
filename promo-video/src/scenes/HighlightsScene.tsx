@@ -4,6 +4,7 @@ import {
   useCurrentFrame,
   spring,
 } from "remotion";
+import { theme } from "../theme";
 
 interface Highlight {
   icon: string;
@@ -32,7 +33,7 @@ export const HighlightsScene: React.FC<HighlightsSceneProps> = ({
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#0f172a",
+        backgroundColor: theme.bg,
         opacity,
       }}
     >
@@ -47,8 +48,7 @@ export const HighlightsScene: React.FC<HighlightsSceneProps> = ({
           width: 500,
           height: 500,
           borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%)",
+          background: `radial-gradient(circle, rgba(${theme.brandFromRgb},0.12) 0%, transparent 70%)`,
         }}
       />
 
@@ -69,7 +69,7 @@ export const HighlightsScene: React.FC<HighlightsSceneProps> = ({
             fontSize: 52,
             fontWeight: 700,
             letterSpacing: "-0.02em",
-            color: "#f8fafc",
+            color: theme.textPrimary,
             textAlign: "center",
             marginBottom: subtitle ? 8 : 48,
           }}
@@ -82,7 +82,7 @@ export const HighlightsScene: React.FC<HighlightsSceneProps> = ({
             style={{
               fontSize: 22,
               fontWeight: 400,
-              color: "#94a3b8",
+                    color: theme.textMuted,
               textAlign: "center",
               marginBottom: 48,
               maxWidth: 600,
@@ -121,8 +121,8 @@ export const HighlightsScene: React.FC<HighlightsSceneProps> = ({
                   width: 280,
                   padding: "32px 24px",
                   borderRadius: 16,
-                  backgroundColor: "rgba(30, 41, 59, 0.8)",
-                  border: "1px solid rgba(51, 65, 85, 0.5)",
+                  backgroundColor: `rgba(${theme.surfaceRgb}, 0.85)`,
+                  border: `1px solid rgba(${theme.borderRgb}, 0.4)`,
                   textAlign: "center",
                   opacity: itemOpacity,
                   transform: `scale(${itemScale})`,
@@ -141,7 +141,7 @@ export const HighlightsScene: React.FC<HighlightsSceneProps> = ({
                   style={{
                     fontSize: 22,
                     fontWeight: 600,
-                    color: "#f1f5f9",
+                    color: theme.textPrimary,
                     marginBottom: 8,
                   }}
                 >
@@ -151,7 +151,7 @@ export const HighlightsScene: React.FC<HighlightsSceneProps> = ({
                   style={{
                     fontSize: 16,
                     fontWeight: 400,
-                    color: "#94a3b8",
+              color: theme.textMuted,
                     lineHeight: 1.5,
                   }}
                 >

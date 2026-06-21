@@ -5,6 +5,7 @@ import {
   useVideoConfig,
   spring,
 } from "remotion";
+import { theme } from "../theme";
 
 const subtitle =
   "Your personal exercise gym instructor — set by set, rep by rep.";
@@ -55,7 +56,7 @@ export const TitleScene: React.FC = () => {
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: "#0f172a",
+        backgroundColor: theme.bg,
         opacity: bgOpacity,
       }}
     >
@@ -68,8 +69,8 @@ export const TitleScene: React.FC = () => {
           width: 300,
           height: 300,
           borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(99,102,241,0.08) 0%, transparent 70%)",
+          background: `radial-gradient(circle, rgba(${theme.brandFromRgb},0.15) 0%, transparent 70%)`,
+
         }}
       />
       <div
@@ -80,8 +81,7 @@ export const TitleScene: React.FC = () => {
           width: 400,
           height: 400,
           borderRadius: "50%",
-          background:
-            "radial-gradient(circle, rgba(99,102,241,0.06) 0%, transparent 70%)",
+          background: `radial-gradient(circle, rgba(${theme.brandFromRgb},0.12) 0%, transparent 70%)`,
         }}
       />
 
@@ -102,16 +102,16 @@ export const TitleScene: React.FC = () => {
             width="16"
             height="40"
             rx="3"
-            fill="#6366f1"
+            fill={theme.brandFrom}
           />
-          <rect x="8" y="16" width="10" height="28" rx="5" fill="#818cf8" />
+          <rect x="8" y="16" width="10" height="28" rx="5" fill={theme.brandMid} />
           <rect
             x="42"
             y="16"
             width="10"
             height="28"
             rx="5"
-            fill="#818cf8"
+            fill={theme.brandMid}
           />
         </svg>
       </div>
@@ -133,7 +133,7 @@ export const TitleScene: React.FC = () => {
             fontSize: 96,
             fontWeight: 800,
             letterSpacing: "-0.03em",
-            color: "#f8fafc",
+            color: theme.textPrimary,
             lineHeight: 1.1,
             marginBottom: 16,
           }}
@@ -141,7 +141,7 @@ export const TitleScene: React.FC = () => {
           Personal{" "}
           <span
             style={{
-              background: "linear-gradient(135deg, #6366f1, #a78bfa)",
+              background: `linear-gradient(135deg, ${theme.brandFrom}, ${theme.brandTo})`,
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
             }}
@@ -167,7 +167,7 @@ export const TitleScene: React.FC = () => {
           style={{
             fontSize: 28,
             fontWeight: 400,
-            color: "#94a3b8",
+            color: theme.textMuted,
             lineHeight: 1.5,
           }}
         >
@@ -192,7 +192,7 @@ export const TitleScene: React.FC = () => {
             width: 10,
             height: 10,
             borderRadius: "50%",
-            backgroundColor: "#6366f1",
+            backgroundColor: theme.brandFrom,
             transform: `scale(${dot1Scale})`,
           }}
         />
@@ -201,7 +201,7 @@ export const TitleScene: React.FC = () => {
             width: 10,
             height: 10,
             borderRadius: "50%",
-            backgroundColor: "#818cf8",
+            backgroundColor: theme.brandMid,
             transform: `scale(${dot2Scale})`,
           }}
         />
@@ -210,7 +210,7 @@ export const TitleScene: React.FC = () => {
             width: 10,
             height: 10,
             borderRadius: "50%",
-            backgroundColor: "#a78bfa",
+            backgroundColor: theme.brandTo,
             transform: `scale(${dot3Scale})`,
           }}
         />

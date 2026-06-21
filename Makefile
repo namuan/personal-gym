@@ -4,7 +4,7 @@
 
 .PHONY: dev build preview help
 .PHONY: test test-watch test-e2e test-e2e-full test-e2e-ui test-e2e-headed test-all
-.PHONY: video-dev video-render video-screenshots video-still
+.PHONY: video-dev video-render video-render-open video-screenshots video-still
 
 # ─── App ──────────────────────────────────────────────────────────────────────
 
@@ -55,6 +55,10 @@ video-dev:
 ## video-render — Render the full product video (output: promo-video/out/)
 video-render:
 	cd promo-video && npx remotion render ProductVideo --output=out/product-video.mp4
+
+## video-render-open — Render the video then open it in the default player
+video-render-open:
+	cd promo-video && npx remotion render ProductVideo --output=out/product-video.mp4 && open out/product-video.mp4
 
 ## video-screenshots — Capture app screenshots via Playwright (requires app running on :4173)
 video-screenshots:
