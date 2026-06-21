@@ -1,0 +1,278 @@
+{
+  "specVersion": "1.0.0",
+  "featureName": "Share workout plan via URL",
+  "actors": [
+    {
+      "name": "Sender",
+      "properties": {
+        "role": "user with a saved active plan",
+        "device": "any browser the app supports"
+      }
+    },
+    {
+      "name": "Recipient",
+      "properties": {
+        "role": "user who opens a shared URL",
+        "device": "any browser the app supports",
+        "mayHaveExistingPlan": true
+      }
+    },
+    {
+      "name": "SharePayloadError",
+      "properties": {
+        "kind": "thrown by decoder on bad input",
+        "codes": "EMPTY | INVALID_BASE64 | INVALID_GZIP | INVALID_JSON | INVALID_SCHEMA | UNSUPPORTED_VERSION"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "SC-001",
+      "description": "Sender generates a share URL from a valid saved plan",
+      "given": "the user is on /plan and the active plan has at least one named exercise",
+      "when": "the user clicks the Share button",
+      "then": [
+        "a modal opens showing a read-only input with the full share URL",
+        "the URL has the form <origin><base>share#data=<payload>",
+        "the modal shows the exercise count and an approximate encoded byte size",
+        "no IndexedDB write happens"
+      ],
+      "tags": ["ui", "sender"]
+    },
+    {
+      "id": "SC-002",
+      "description": "Share button is disabled when plan is unsaveable",
+      "given": "the active plan is null OR has zero exercises with a non-empty name",
+      "when": "the user views the plan editor",
+      "then": [
+        "the Share button is rendered but disabled",
+        "the Save flow is unaffected"
+      ],
+      "tags": ["ui", "guard"]
+    },
+    {
+      "id": "SC-003",
+      "description": "Sender copies the share URL",
+      "given": "the share modal is open with a URL in its input",
+      "when": "the user clicks Copy",
+      "then": [
+        "the URL is written to the system clipboard via navigator.clipboard.writeText",
+        "the button label changes to 'Copied!' for ~1.5s, then reverts"
+      ],
+      "tags": ["ui", "clipboard"]
+    },
+    {
+      "id": "SC-004",
+      "description": "Recipient opens a valid share URL and previews the plan",
+      "given": "the URL hash is '#data=<valid base64url-encoded gzip JSON v1 payload>'",
+      "when": "the page mounts at /share",
+      "then": [
+        "the payload is decoded into { v: 1, exercises: [...] }",
+        "each exercise is rendered with name, sets, reps, rest seconds",
+        "instructions are collapsed by default and expandable",
+        "Import and Cancel buttons are visible"
+      ],
+      "tags": ["ui", "recipient"]
+    },
+    {
+      "id": "SC-005",
+      "description": "Recipient imports the shared plan",
+      "given": "the share page shows a valid decoded preview",
+      "when": "the user clicks 'Import this plan'",
+      "then": [
+        "planRepo.savePlan is called with the normalised exercises from the payload",
+        "on success, the hash is cleared from the URL and the user is navigated to /plan",
+        "the new plan is visible in the editor",
+        "session history is untouched"
+      ],
+      "tags": ["ui", "recipient", "persistence"]
+    },
+    {
+      "id": "SC-006",
+      "description": "Recipient cancels the share page",
+      "given": "the share page shows a decoded preview",
+      "when": "the user clicks Cancel, presses Escape, or clicks the backdrop",
+      "then": [
+        "the user is navigated to / with the hash cleared",
+        "no IndexedDB write happens"
+      ],
+      "tags": ["ui", "recipient"]
+    },
+    {
+      "id": "SC-007",
+      "description": "Recipient opens a corrupt or truncated share URL",
+      "given": "the URL hash is '#data=###not-valid-base64url###' or a payload that fails gzip/JSON/schema checks",
+      "when": "the page mounts at /share",
+      "then": [
+        "the page shows the message 'This share link is invalid or corrupted.'",
+        "a link back to / is rendered",
+        "no Import or Cancel button is shown"
+      ],
+      "tags": ["ui", "recipient", "error"]
+    },
+    {
+      "id": "SC-008",
+      "description": "Recipient opens a share URL from a newer app version",
+      "given": "the payload decodes to JSON with { v: 2, exercises: [...] }",
+      "when": "the page mounts at /share",
+      "then": [
+        "the page shows 'This share link was created with a newer version of the app.'",
+        "no Import or Cancel button is shown",
+        "a link back to / is rendered"
+      ],
+      "tags": ["ui", "recipient", "error", "versioning"]
+    },
+    {
+      "id": "SC-009",
+      "description": "encodePlanToPayload round-trips through decodePayloadToPlan",
+      "given": "a plan object with N normalised exercises",
+      "when": "encodePlanToPayload is called and the result is passed to decodePayloadToPlan",
+      "then": [
+        "decodePayloadToPlan returns { v: 1, exercises: [...] }",
+        "the returned exercises are structurally equal to the input exercises after normaliseExercise"
+      ],
+      "tags": ["unit", "encoding"]
+    },
+    {
+      "id": "SC-010",
+      "description": "encodePlanToPayload produces a base64url string with no padding",
+      "given": "a plan with at least one exercise",
+      "when": "encodePlanToPayload is called",
+      "then": [
+        "the returned string matches /^[A-Za-z0-9_-]+$/",
+        "the returned string contains no '+', '/', or '=' characters"
+      ],
+      "tags": ["unit", "encoding"]
+    },
+    {
+      "id": "SC-011",
+      "description": "decodePayloadToPlan throws SharePayloadError with INVALID_BASE64 on bad base64url",
+      "given": "a payload string containing characters outside [A-Za-z0-9_-]",
+      "when": "decodePayloadToPlan is called",
+      "then": [
+        "it throws SharePayloadError with code 'INVALID_BASE64'"
+      ],
+      "tags": ["unit", "decoding", "error"]
+    },
+    {
+      "id": "SC-012",
+      "description": "decodePayloadToPlan throws SharePayloadError with INVALID_GZIP on bad gzip bytes",
+      "given": "a valid base64url string that does not decode to valid gzip",
+      "when": "decodePayloadToPlan is called",
+      "then": [
+        "it throws SharePayloadError with code 'INVALID_GZIP'"
+      ],
+      "tags": ["unit", "decoding", "error"]
+    },
+    {
+      "id": "SC-013",
+      "description": "decodePayloadToPlan throws SharePayloadError with INVALID_JSON on non-JSON gzip content",
+      "given": "valid base64url + valid gzip wrapping a non-JSON string",
+      "when": "decodePayloadToPlan is called",
+      "then": [
+        "it throws SharePayloadError with code 'INVALID_JSON'"
+      ],
+      "tags": ["unit", "decoding", "error"]
+    },
+    {
+      "id": "SC-014",
+      "description": "decodePayloadToPlan throws SharePayloadError with UNSUPPORTED_VERSION on v>1",
+      "given": "a payload whose decoded JSON has v=2",
+      "when": "decodePayloadToPlan is called",
+      "then": [
+        "it throws SharePayloadError with code 'UNSUPPORTED_VERSION'"
+      ],
+      "tags": ["unit", "decoding", "error", "versioning"]
+    },
+    {
+      "id": "SC-015",
+      "description": "decodePayloadToPlan throws SharePayloadError with INVALID_SCHEMA on missing fields",
+      "given": "a payload whose decoded JSON has v=1 but exercises is missing or not an array",
+      "when": "decodePayloadToPlan is called",
+      "then": [
+        "it throws SharePayloadError with code 'INVALID_SCHEMA'"
+      ],
+      "tags": ["unit", "decoding", "error"]
+    },
+    {
+      "id": "SC-016",
+      "description": "extractPayloadFromHash returns the substring after #data= URL-decoded",
+      "given": "window.location.hash === '#data=eyJ2IjoxLCJleGVyY2lzZXMiOltdfQ'",
+      "when": "extractPayloadFromHash is called with that hash",
+      "then": [
+        "it returns 'eyJ2IjoxLCJleGVyY2lzZXMiOltdfQ'"
+      ],
+      "tags": ["unit", "url"]
+    },
+    {
+      "id": "SC-017",
+      "description": "extractPayloadFromHash returns null when the hash does not carry data",
+      "given": "window.location.hash is '', '#', or anything not starting with '#data='",
+      "when": "extractPayloadFromHash is called",
+      "then": [
+        "it returns null",
+        "it does not throw"
+      ],
+      "tags": ["unit", "url"]
+    },
+    {
+      "id": "SC-018",
+      "description": "buildShareUrl composes origin, base, route, and payload",
+      "given": "origin='https://x.test', base='/p/', payload='abc'",
+      "when": "buildShareUrl is called with those arguments",
+      "then": [
+        "it returns 'https://x.test/p/share#data=abc'",
+        "it never reads window"
+      ],
+      "tags": ["unit", "url"]
+    },
+    {
+      "id": "SC-019",
+      "description": "End-to-end: sender generates URL, opens it in a new context, imports, sees new plan",
+      "given": "the editor has a saved plan with two named exercises",
+      "when": "the user clicks Share, copies the URL, opens the URL in a new tab, clicks Import",
+      "then": [
+        "the share page shows the two named exercises in order",
+        "after Import, navigating to /plan shows those two exercises in the editor",
+        "the URL hash is empty after import"
+      ],
+      "tags": ["e2e", "happy-path"]
+    }
+  ],
+  "dataModels": {
+    "ShareEnvelope": {
+      "fields": {
+        "v": { "type": "integer", "required": true, "minimum": 1, "description": "Schema version. 1 is the only version defined by this feature." },
+        "exercises": { "type": "array", "required": true, "minLength": 0, "description": "Exercise records in display order. Each entry is normalised by normaliseExercise before storage." }
+      }
+    },
+    "SharePayloadError": {
+      "fields": {
+        "code": { "type": "string", "required": true, "description": "One of EMPTY | INVALID_BASE64 | INVALID_GZIP | INVALID_JSON | INVALID_SCHEMA | UNSUPPORTED_VERSION." },
+        "message": { "type": "string", "required": true, "description": "Human-readable message safe to display to the user." }
+      }
+    },
+    "ShareUrlParts": {
+      "fields": {
+        "origin": { "type": "string", "required": true, "description": "window.location.origin at the time of share." },
+        "base": { "type": "string", "required": true, "description": "Configured Vite base path with trailing slash, e.g. '/personal-gym/'." },
+        "payload": { "type": "string", "required": true, "description": "base64url string produced by encodePlanToPayload." }
+      }
+    }
+  },
+  "nonFunctionalRequirements": [
+    "Encoding + decoding a 20-exercise plan completes in under 50ms on a mid-range mobile device.",
+    "Encoded URL stays under 2000 characters for plans of up to 20 exercises.",
+    "No new runtime dependencies are introduced; the pipeline uses CompressionStream, DecompressionStream, TextEncoder, TextDecoder, and atob.",
+    "The share pipeline is unit-testable in jsdom (the encoding module is structured so the compression step is swappable in tests).",
+    "PWA offline mode works: once the app shell is cached, the entire share/import flow is fully functional without network access.",
+    "The hash fragment is used (not the query string) so the payload is never sent to any server in Referer headers."
+  ],
+  "assumptions": [
+    "The existing single-active-plan model is preserved; this feature does not introduce a plan library.",
+    "Recipients have a compatible browser that supports CompressionStream and DecompressionStream; the app already targets only browsers that do.",
+    "crypto.randomUUID is available in jsdom during tests (or polyfilled via the existing test setup).",
+    "Existing planModel.normaliseExercise is the single source of truth for exercise shape on import.",
+    "The Vite BASE constant is already centralised enough that the share UI can import it without a circular dependency."
+  ]
+}

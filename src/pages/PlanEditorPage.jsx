@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePlan } from '../context/PlanContext.jsx';
 import { makeBlankExercise } from '../data/planRepository.js';
+import { encodePlanToPayload } from '../data/shareCodec.js';
+import ShareModal from '../components/ShareModal.jsx';
 
 const blankExercise = makeBlankExercise;
 
@@ -18,6 +20,11 @@ export default function PlanEditorPage() {
   const [dirty, setDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+
+  const [shareOpen, setShareOpen] = useState(false);
+  const [sharePayload, setSharePayload] = useState(null);
+  const [shareError, setShareError] = useState(null);
+  const [shareMeta, setShareMeta] = useState({ count: 0, bytes: 0 });
 
   // Hydrate the editor from the saved plan once it loads.
   useEffect(() => {
@@ -95,9 +102,37 @@ export default function PlanEditorPage() {
     setDirty(false);
   }
 
+  // The Share button works on the *last saved* plan (the one in context),
+  // not on unsaved edits — that way the recipient always gets exactly
+  // what the sender has persisted.
+  async function handleShare() {
+    if (!plan) return;
+    setShareError(null);
+    setSharePayload(null);
+    try {
+      const namedExercises = plan.exercises.filter(
+        (e) => typeof e.name === 'string' && e.name.trim().length > 0,
+      );
+      const payload = await encodePlanToPayload({ exercises: namedExercises });
+      setSharePayload(payload);
+      setShareMeta({ count: namedExercises.length, bytes: payload.length });
+      setShareOpen(true);
+    } catch (err) {
+      setShareError(
+        err?.message ?? 'Could not generate a share link for this plan.',
+      );
+      setShareOpen(true);
+    }
+  }
+
   if (loading) {
     return <p className="text-sm text-slate-500">Loading your plan…</p>;
   }
+
+  const savedNamedCount = (plan?.exercises ?? []).filter(
+    (e) => typeof e.name === 'string' && e.name.trim().length > 0,
+  ).length;
+  const canShare = Boolean(plan) && savedNamedCount > 0 && !dirty;
 
   return (
     <div className="space-y-4">
@@ -152,6 +187,21 @@ export default function PlanEditorPage() {
           </button>
           <button
             type="button"
+            onClick={handleShare}
+            disabled={!canShare}
+            title={
+              canShare
+                ? 'Generate a shareable link for the saved plan'
+                : dirty
+                ? 'Save the plan first to share it'
+                : 'Add at least one named exercise to share'
+            }
+            className="btn-secondary"
+          >
+            Share
+          </button>
+          <button
+            type="button"
             onClick={() => navigate('/')}
             className="btn-ghost"
           >
@@ -159,6 +209,15 @@ export default function PlanEditorPage() {
           </button>
         </div>
       </div>
+
+      <ShareModal
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        payload={sharePayload}
+        exerciseCount={shareMeta.count}
+        encodedBytes={shareMeta.bytes}
+        error={shareError}
+      />
     </div>
   );
 }

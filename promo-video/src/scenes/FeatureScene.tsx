@@ -97,7 +97,7 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
           <div
             style={{
               width: 320,
-              height: 690,
+              height: 730,
               borderRadius: 36,
               border: "3px solid #334155",
               overflow: "hidden",
@@ -132,8 +132,8 @@ export const FeatureScene: React.FC<FeatureSceneProps> = ({
               style={{
                 width: "100%",
                 height: "calc(100% - 36px)",
-                objectFit: "cover",
-                objectPosition: "top center",
+                objectFit: "contain",
+                objectPosition: "center center",
               }}
             />
           </div>

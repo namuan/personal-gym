@@ -5,6 +5,7 @@ import PlanEditorPage from './pages/PlanEditorPage.jsx';
 import WorkoutSessionPage from './pages/WorkoutSessionPage.jsx';
 import HistoryPage from './pages/HistoryPage.jsx';
 import HistoryDetailPage from './pages/HistoryDetailPage.jsx';
+import SharePage from './pages/SharePage.jsx';
 
 /**
  * App is the top-level routed shell. The Layout component handles the
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="session" element={<WorkoutSessionPage />} />
         <Route path="history" element={<HistoryPage />} />
         <Route path="history/:sessionId" element={<HistoryDetailPage />} />
+        <Route path="share" element={<SharePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
