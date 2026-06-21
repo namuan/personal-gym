@@ -231,19 +231,52 @@ function ExerciseCard({
   onMoveUp,
   onMoveDown,
 }) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
-    <div className="card space-y-3">
-      <div className="flex items-start justify-between gap-2">
-        <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-          Exercise {index + 1}
-        </div>
-        <div className="flex items-center gap-1">
+    <div className="card p-3">
+      {/* ── Header row (always visible) ── */}
+      <div className="flex items-center gap-2">
+        {/* Expand/collapse toggle */}
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="btn-ghost h-7 w-7 shrink-0 px-0 text-xs"
+          aria-label={expanded ? 'Collapse exercise' : 'Expand exercise'}
+        >
+          {expanded ? '▼' : '▶'}
+        </button>
+
+        {/* Exercise number */}
+        <span className="w-5 text-xs font-semibold tabular-nums text-slate-400">
+          {index + 1}.
+        </span>
+
+        {/* Name — always editable inline */}
+        <input
+          type="text"
+          className="min-w-0 flex-1 border-0 bg-transparent px-0 py-0.5 text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400 focus:ring-0"
+          placeholder="Exercise name"
+          value={exercise.name}
+          onChange={(e) => onChange({ name: e.target.value })}
+        />
+
+        {/* Summary badge — shown only when collapsed */}
+        {!expanded && exercise.sets > 0 && (
+          <span className="shrink-0 whitespace-nowrap text-xs tabular-nums text-slate-500">
+            {exercise.sets}×{exercise.reps}
+            {exercise.restSeconds > 0 ? ` · ${exercise.restSeconds}s` : ''}
+          </span>
+        )}
+
+        {/* Reorder / remove controls */}
+        <div className="flex shrink-0 items-center gap-0.5">
           <button
             type="button"
             onClick={onMoveUp}
             disabled={index === 0}
             aria-label="Move up"
-            className="btn-ghost h-8 w-8 px-0"
+            className="btn-ghost h-7 w-7 px-0"
           >
             ↑
           </button>
@@ -252,7 +285,7 @@ function ExerciseCard({
             onClick={onMoveDown}
             disabled={index === total - 1}
             aria-label="Move down"
-            className="btn-ghost h-8 w-8 px-0"
+            className="btn-ghost h-7 w-7 px-0"
           >
             ↓
           </button>
@@ -261,86 +294,83 @@ function ExerciseCard({
             onClick={onRemove}
             disabled={total <= 1}
             aria-label="Remove exercise"
-            className="btn-ghost h-8 w-8 px-0 text-red-600"
+            className="btn-ghost h-7 w-7 px-0 text-red-600"
           >
             ✕
           </button>
         </div>
       </div>
 
-      <div>
-        <label className="label" htmlFor={`name-${exercise.id}`}>
-          Name
-        </label>
-        <input
-          id={`name-${exercise.id}`}
-          type="text"
-          className="input"
-          placeholder="e.g. Push-ups"
-          value={exercise.name}
-          onChange={(e) => onChange({ name: e.target.value })}
-        />
-      </div>
+      {/* ── Expanded detail fields ── */}
+      {expanded && (
+        <div className="mt-3 space-y-3 border-t border-slate-100 pt-3">
+          {/* Sets / Reps / Rest */}
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="label" htmlFor={`sets-${exercise.id}`}>
+                Sets
+              </label>
+              <input
+                id={`sets-${exercise.id}`}
+                type="number"
+                min={1}
+                inputMode="numeric"
+                className="input"
+                value={exercise.sets}
+                onChange={(e) =>
+                  onChange({ sets: Math.max(1, Number(e.target.value) || 1) })
+                }
+              />
+            </div>
+            <div>
+              <label className="label" htmlFor={`reps-${exercise.id}`}>
+                Reps
+              </label>
+              <input
+                id={`reps-${exercise.id}`}
+                type="number"
+                min={1}
+                inputMode="numeric"
+                className="input"
+                value={exercise.reps}
+                onChange={(e) =>
+                  onChange({ reps: Math.max(1, Number(e.target.value) || 1) })
+                }
+              />
+            </div>
+            <div>
+              <label className="label" htmlFor={`rest-${exercise.id}`}>
+                Rest (s)
+              </label>
+              <input
+                id={`rest-${exercise.id}`}
+                type="number"
+                min={0}
+                inputMode="numeric"
+                className="input"
+                value={exercise.restSeconds}
+                onChange={(e) =>
+                  onChange({ restSeconds: Math.max(0, Number(e.target.value) || 0) })
+                }
+              />
+            </div>
+          </div>
 
-      <div className="grid grid-cols-3 gap-3">
-        <div>
-          <label className="label" htmlFor={`sets-${exercise.id}`}>
-            Sets
-          </label>
-          <input
-            id={`sets-${exercise.id}`}
-            type="number"
-            min={1}
-            inputMode="numeric"
-            className="input"
-            value={exercise.sets}
-            onChange={(e) => onChange({ sets: Math.max(1, Number(e.target.value) || 1) })}
-          />
+          {/* Instructions */}
+          <div>
+            <label className="label" htmlFor={`instr-${exercise.id}`}>
+              Instructions
+            </label>
+            <textarea
+              id={`instr-${exercise.id}`}
+              className="textarea min-h-[60px]"
+              placeholder="Cues, form notes, tempo…"
+              value={exercise.instructions}
+              onChange={(e) => onChange({ instructions: e.target.value })}
+            />
+          </div>
         </div>
-        <div>
-          <label className="label" htmlFor={`reps-${exercise.id}`}>
-            Reps
-          </label>
-          <input
-            id={`reps-${exercise.id}`}
-            type="number"
-            min={1}
-            inputMode="numeric"
-            className="input"
-            value={exercise.reps}
-            onChange={(e) => onChange({ reps: Math.max(1, Number(e.target.value) || 1) })}
-          />
-        </div>
-        <div>
-          <label className="label" htmlFor={`rest-${exercise.id}`}>
-            Rest (s)
-          </label>
-          <input
-            id={`rest-${exercise.id}`}
-            type="number"
-            min={0}
-            inputMode="numeric"
-            className="input"
-            value={exercise.restSeconds}
-            onChange={(e) =>
-              onChange({ restSeconds: Math.max(0, Number(e.target.value) || 0) })
-            }
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="label" htmlFor={`instr-${exercise.id}`}>
-          Instructions
-        </label>
-        <textarea
-          id={`instr-${exercise.id}`}
-          className="textarea"
-          placeholder="Cues, form notes, tempo…"
-          value={exercise.instructions}
-          onChange={(e) => onChange({ instructions: e.target.value })}
-        />
-      </div>
+      )}
     </div>
   );
 }
